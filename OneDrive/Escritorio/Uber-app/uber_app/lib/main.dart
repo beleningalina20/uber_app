@@ -6,7 +6,10 @@ import 'package:uber_app/screens/screens.dart';
 void main() => runApp(MultiBlocProvider(providers: [
       BlocProvider(create: (_) => GpsBloc()),
       BlocProvider(create: (_) => LocationBloc()),
-      BlocProvider(create: (_) => MapBloc())
+      // Injeccion de dependencias
+      BlocProvider(
+          create: (context) =>
+              MapBloc(locationBloc: BlocProvider.of<LocationBloc>(context)))
     ], child: const MapsApp()));
 
 // Ctrl + F2
