@@ -8,9 +8,13 @@ import 'package:uber_app/blocs/blocs.dart';
 class MapView extends StatelessWidget {
   final LatLng initialLocation;
   final Set<Polyline> polylines;
+  final Set<Marker> markers;
 
   const MapView(
-      {super.key, required this.initialLocation, required this.polylines});
+      {super.key,
+      required this.initialLocation,
+      required this.polylines,
+      required this.markers});
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +34,21 @@ class MapView extends StatelessWidget {
           mapBloc.add(OnStopFollowingUserEvent());
         },
         child: GoogleMap(
-            mapType: MapType.hybrid,
-            initialCameraPosition: initialCameraPosition,
-            compassEnabled: true,
-            myLocationEnabled: true,
-            zoomControlsEnabled: false,
-            myLocationButtonEnabled: false,
-            onMapCreated: (controller) {
-              mapBloc.add(OnMapInitializeEvent(controller));
-            },
-            polylines: polylines,
-            onCameraMove: (position) {
-              mapBloc.mapCenter = position.target;
-            }
-            // TODO Markers
-            // TODO polylines
-            // TODO Cuando se mueve el mapa
-            ),
+          mapType: MapType.hybrid,
+          initialCameraPosition: initialCameraPosition,
+          compassEnabled: true,
+          myLocationEnabled: true,
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          onMapCreated: (controller) {
+            mapBloc.add(OnMapInitializeEvent(controller));
+          },
+          polylines: polylines,
+          onCameraMove: (position) {
+            mapBloc.mapCenter = position.target;
+          },
+          markers: markers,
+        ),
       ),
     );
   }

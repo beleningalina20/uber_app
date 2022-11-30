@@ -30,11 +30,20 @@ class TrafficService {
     final url = '$_basePlacesUrl/$query.json';
 
     final resp = await _dioPlaces.get(url, queryParameters: {
+      'limit': 5,
       'proximity': '${proximity.longitude},${proximity.latitude}'
     });
 
     final placesResponse = PlacesResponse.fromJson(resp.data);
 
     return placesResponse.features;
+  }
+
+  Future<Feature> getInformationByCoors(LatLng coors) async {
+    final url = '$_basePlacesUrl/${coors.longitude},${coors.latitude}.json';
+    final resp = await _dioPlaces.get(url, queryParameters: {'limit': 1});
+
+    final placesResponse = PlacesResponse.fromJson(resp.data);
+    return placesResponse.features.first;
   }
 }
