@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_app/blocs/blocs.dart';
+import 'package:uber_app/models/models.dart';
 import 'package:uber_app/themes/themes.dart';
 
 part 'map_event.dart';
@@ -15,6 +16,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController? _mapController;
   final LocationBloc locationBloc;
   StreamSubscription<LocationState>? locationStateSubscription;
+  LatLng? mapCenter;
 
   MapBloc({required this.locationBloc}) : super(const MapState()) {
     on<OnMapInitializeEvent>(_onInitMap);
@@ -27,6 +29,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnToggleUserRouteEvent>(
       (event, emit) => emit(state.copyWith(smr: !state.showMyRoute)),
     );
+
+    on<DisplayPolylinesEvent>(
+        (event, emit) => emit(state.copyWith(p: event.polylines)));
 
     locationStateSubscription = locationBloc.stream.listen((locationState) {
       if (locationState.lastKnownLocation != null) {
@@ -43,6 +48,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _mapController = event.controller;
     _mapController!.setMapStyle(jsonEncode(uberMapTheme));
     emit(state.copyWith(imi: true));
+  }
+
+  Future drawRoutePolyline(RouteDestination destination) async {
+    final myRoute = Polyline(
+      polylineId: const PolylineId('route'),
+      color: Colors.black,
+      width: 5,
+      points: destination.points,
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
+    );
+
+    final curretPolylines = Map<String, Polyline>.from(state.polylines);
+    curretPolylines['route'] = myRoute;
+
+    add(DisplayPolylinesEvent(curretPolylines));
   }
 
   void moveCamera(LatLng newLocation) {

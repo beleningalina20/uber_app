@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uber_app/blocs/blocs.dart';
 import 'package:uber_app/screens/screens.dart';
+import 'package:uber_app/services/services.dart';
 
 void main() => runApp(MultiBlocProvider(providers: [
       BlocProvider(create: (_) => GpsBloc()),
@@ -9,7 +10,9 @@ void main() => runApp(MultiBlocProvider(providers: [
       // Injeccion de dependencias
       BlocProvider(
           create: (context) =>
-              MapBloc(locationBloc: BlocProvider.of<LocationBloc>(context)))
+              MapBloc(locationBloc: BlocProvider.of<LocationBloc>(context))),
+
+      BlocProvider(create: (_) => SearchBloc(trafficService: TrafficService()))
     ], child: const MapsApp()));
 
 // Ctrl + F2
